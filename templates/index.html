@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; }
+        form { margin-bottom: 20px; }
+        label { display: block; margin-top: 10px; }
+        button { margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>User Management</h1>
+
+    <form id="addUserForm">
+        <h2>Add User</h2>
+        <label>First Name: <input type="text" id="first_name" required></label>
+        <label>Last Name: <input type="text" id="last_name" required></label>
+        <label>Gender: 
+            <select id="gender" required>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+            </select>
+        </label>
+        <label>Role: 
+            <select id="role" required>
+                <option value="student">Student</option>
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+            </select>
+        </label>
+        <button type="button" onclick="addUser()">Add User</button>
+    </form>
+
+    <form id="deleteUserForm">
+        <h2>Delete User</h2>
+        <label>User ID: <input type="text" id="user_id" required></label>
+        <button type="button" onclick="deleteUser()">Delete User</button>
+    </form>
+
+    <h2>User List</h2>
+    <button onclick="fetchUsers()">Show Users</button>
+    <ul id="userList"></ul>
+
+    <script>
+        async function addUser() {
+            const first_name = document.getElementById('first_name').value;
+            const last_name = document.getElementById('last_name').value;
+            const gender = document.getElementById('gender').value;
+            const role = document.getElementById('role').value;
+            
+            const response = await fetch('/api/users/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    first_name,
+                    last_name,
+                    gender,
+                    roles: [role]
+                })
+            });
+            
+            const result = await response.json();
+            alert(`User added with ID: ${result.id}`);
+        }
+
+        async function deleteUser() {
+            const user_id = document.getElementById('user_id').value;
+            
+            const response = await fetch(`/api/users/${user_id}`, {
+                method: 'DELETE',
+            });
+
+            if (response.status === 200) {
+                alert('User deleted successfully');
+            } else {
+                const error = await response.json();
+                alert(error.detail);
+            }
+        }
+
+        async function fetchUsers() {
+            const response = await fetch('/api/users');
+            const users = await response.json();
+            
+            const userList = document.getElementById('userList');
+            userList.innerHTML = '';
+            users.forEach(user => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `${user.first_name} ${user.last_name} - ${user.gender} (${user.roles.join(", ")})`;
+                userList.appendChild(listItem);
+            });
+        }
+    </script>
+</body>
+</html>
