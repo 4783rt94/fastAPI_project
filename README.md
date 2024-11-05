@@ -1,2 +1,8 @@
 # fastAPI_project
-An example project demonstrating the use of the FastAPI framework for building efficient and scalable APIs in Python. The repository contains basic code showcasing how to quickly set up an API with built-in documentation and asynchronous support.
+A sample project demonstrating how to build an efficient API in Python using FastAPI.
+
+
+
+
+
+
